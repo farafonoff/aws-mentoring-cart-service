@@ -8,3 +8,15 @@ functions:
   cart-service:
     handler: dist/mainLambda.handler
     url: true
+resources:
+  Resources:
+    CartDB:
+      Type: AWS::RDS::DBInstance
+      Properties:
+        AllocatedStorage: '20'
+        DBInstanceClass: db.t2.micro
+        Engine: postgres
+        MasterUsername: postgres
+        MasterUserPassword: postgres
+        PubliclyAccessible: true
+      DeletionPolicy: Snapshot
