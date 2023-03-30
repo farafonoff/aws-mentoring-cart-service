@@ -29,14 +29,17 @@
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^9.3.12",
     "@nestjs/swagger": "^6.2.1",
+    "@nestjs/typeorm": "^9.0.1",
     "@vendia/serverless-express": "^4.10.1",
     "aws-lambda": "^1.0.7",
     "passport": "^0.6.0",
     "passport-http": "^0.3.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
+    "pg": "^8.10.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
+    "typeorm": "^0.3.12",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

@@ -10,10 +10,10 @@ export const handler = async (event, context) => {
   if (!cachedServer) {
     const app = await NestFactory.create(AppModule);
     const config = new DocumentBuilder()
-      .setTitle('Cats example')
-      .setDescription('The cats API description')
+      .setTitle('Cart service')
+      .setDescription('The cart API description')
       .setVersion('1.0')
-      .addTag('cats')
+      .addTag('cart')
       .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);
