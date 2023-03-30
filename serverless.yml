@@ -1,0 +1,10 @@
+service: farafonoff-aws-cart-service
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-2
+  deploymentMethod: direct
+functions:
+  cart-service:
+    handler: dist/mainLambda.handler
+    url: true
