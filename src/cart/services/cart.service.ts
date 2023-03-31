@@ -4,21 +4,24 @@ import { Cart } from '../models';
 
 @Injectable()
 export class CartService {
+  async markAsOrdered(userId: string) {
+    const userCart = await this.findByUserId(userId);
+    userCart.status = 'ORDERED';
+    this.database.save(userCart);
+  }
+
   constructor(private database: EntityManager) {}
 
   async findByUserId(userId: string): Promise<Cart> {
-    return await this.database.findOneBy(Cart, { userId });
+    return await this.database.findOneBy(Cart, { userId, status: 'OPENED' });
   }
 
   async createByUserId(userId: string) {
     const userCart: Cart = {
-      id: undefined,
       userId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
       status: 'OPENED',
       items: [],
-    };
+    } as Cart;
 
     const result = await this.database.create(Cart, userCart);
     return result;

@@ -1,5 +1,6 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { Cart, CartItem } from './cart';
+import { Order } from './order';
 require('dotenv').config({ path: `.env.local` });
 
 class ConfigService {
@@ -38,13 +39,12 @@ class ConfigService {
       password: this.getValue('POSTGRES_PASSWORD'),
       database: this.getValue('POSTGRES_DATABASE'),
 
-      entities: [CartItem, Cart],
+      entities: [CartItem, Cart, Order],
 
       migrationsTableName: 'migration',
 
-      migrations: ['src/migration/*.ts'],
-
-      synchronize: !this.isProduction(),
+      // turned on synchronize to simplify things. For production project, proper migrations hould be implemented
+      synchronize: true,
 
       ssl: this.isProduction(),
     };

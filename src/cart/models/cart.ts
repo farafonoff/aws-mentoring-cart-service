@@ -1,4 +1,11 @@
-import { PrimaryGeneratedColumn, Column, Entity, OneToMany } from 'typeorm';
+import {
+  PrimaryGeneratedColumn,
+  Column,
+  Entity,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { CartItem } from './cart-item';
 
 @Entity('carts')
@@ -9,10 +16,17 @@ export class Cart {
   @Column()
   userId: string;
 
-  @Column()
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
   createdAt: Date;
 
-  @Column()
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
+  })
   updatedAt: Date;
 
   @Column({
