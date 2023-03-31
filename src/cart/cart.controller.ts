@@ -10,6 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { BasicAuthGuard } from 'src/auth/guards';
+import { EntityManager } from 'typeorm';
 
 // import { BasicAuthGuard, JwtAuthGuard } from '../auth';
 import { OrderService } from '../order';
@@ -23,6 +24,7 @@ export class CartController {
   constructor(
     private cartService: CartService,
     private orderService: OrderService,
+    private database: EntityManager,
   ) {}
 
   // @UseGuards(JwtAuthGuard)
@@ -77,31 +79,34 @@ export class CartController {
   @Post('checkout')
   async checkout(@Req() req: AppRequest, @Body() body) {
     const userId = getUserIdFromRequest(req);
-    const cart = await this.cartService.findByUserId(userId);
+    const order = await this.database.transaction(async () => {
+      const cart = await this.cartService.findByUserId(userId);
 
-    if (!(cart && cart.items.length)) {
-      const statusCode = HttpStatus.BAD_REQUEST;
-      req.statusCode = statusCode;
+      if (!(cart && cart.items.length)) {
+        const statusCode = HttpStatus.BAD_REQUEST;
+        req.statusCode = statusCode;
 
-      return {
-        statusCode,
-        message: 'Cart is empty',
-      };
-    }
+        return {
+          statusCode,
+          message: 'Cart is empty',
+        };
+      }
 
-    const { id: cartId, items } = cart;
-    const total = calculateCartTotal(cart);
-    const order = this.orderService.create({
-      payment: {},
-      delivery: {},
-      comments: '',
-      ...body, // TODO: validate and pick only necessary data
-      userId,
-      items,
-      total,
-      cart,
+      const { id: cartId, items } = cart;
+      const total = calculateCartTotal(cart);
+      const order = this.orderService.create({
+        payment: {},
+        delivery: {},
+        comments: '',
+        ...body, // TODO: validate and pick only necessary data
+        userId,
+        items,
+        total,
+        cart,
+      });
+      this.cartService.markAsOrdered(userId);
+      return order;
     });
-    this.cartService.markAsOrdered(userId);
 
     return {
       statusCode: HttpStatus.OK,
