@@ -8,7 +8,12 @@ provider:
 functions:
   cart-service:
     handler: dist/mainLambda.handler
-    url: true
+    url:
+      cors:
+        allowedOrigins:
+          - 'http://localhost:5555'
+          - 'http://db27n60o60d5z.cloudfront.net'
+          - 'https://db27n60o60d5z.cloudfront.net'
     environment:
       POSTGRES_HOST: !GetAtt CartDB.Endpoint.Address
       POSTGRES_PORT: !GetAtt CartDB.Endpoint.Port
@@ -20,7 +25,10 @@ resources:
     CartDB:
       Type: AWS::RDS::DBInstance
       Properties:
+        DBName: cart
         AllocatedStorage: '20'
+        VPCSecurityGroups:
+          - !GetAtt DBEC2SecurityGroup.GroupId
         DBInstanceClass: db.t4g.micro
         Engine: postgres
         MasterUsername: postgres
@@ -28,6 +36,18 @@ resources:
         PubliclyAccessible: true
         BackupRetentionPeriod: 0
       DeletionPolicy: Snapshot
+
+    DBEC2SecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupName: PublicAccessDBGroup
+        GroupDescription: Allow postgres inbound traffic
+        SecurityGroupIngress:
+          - IpProtocol: tcp
+            CidrIp: 0.0.0.0/0
+            FromPort: 5432
+            ToPort: 5432
+
   Outputs:
     DatabaseHost:
       Value: !GetAtt CartDB.Endpoint.Address
