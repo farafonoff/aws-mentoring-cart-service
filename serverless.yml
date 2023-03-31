@@ -10,8 +10,8 @@ functions:
     handler: dist/mainLambda.handler
     url: true
     environment:
-      POSTGRES_HOST: '${CartDB.Endpoint.Address}'
-      POSTGRES_PORT: 5432
+      POSTGRES_HOST: !GetAtt CartDB.Endpoint.Address
+      POSTGRES_PORT: !GetAtt CartDB.Endpoint.Port
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: '{{resolve:ssm:db_password}}'
       POSTGRES_DATABASE: cart
@@ -28,3 +28,12 @@ resources:
         PubliclyAccessible: true
         BackupRetentionPeriod: 0
       DeletionPolicy: Snapshot
+  Outputs:
+    DatabaseHost:
+      Value: !GetAtt CartDB.Endpoint.Address
+      Export:
+        Name: DatabaseHost
+    DatabasePort:
+      Value: !GetAtt CartDB.Endpoint.Port
+      Export:
+        Name: DatabasePort
