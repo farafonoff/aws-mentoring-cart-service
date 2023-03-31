@@ -6,7 +6,7 @@ export class Cart {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'uuid' })
+  @Column()
   userId: string;
 
   @Column()
@@ -25,6 +25,11 @@ export class Cart {
   @OneToMany(
     () => CartItem,
     cartItem => cartItem.cart,
+    {
+      cascade: ['insert', 'update', 'remove'],
+      eager: true,
+      orphanedRowAction: 'delete',
+    },
   )
   items: CartItem[];
 }
