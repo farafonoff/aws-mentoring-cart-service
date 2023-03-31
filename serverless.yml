@@ -9,6 +9,12 @@ functions:
   cart-service:
     handler: dist/mainLambda.handler
     url: true
+    environment:
+      POSTGRES_HOST: '${CartDB.Endpoint.Address}'
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: '{{resolve:ssm:db_password}}'
+      POSTGRES_DATABASE: cart
 resources:
   Resources:
     CartDB:
@@ -18,7 +24,7 @@ resources:
         DBInstanceClass: db.t4g.micro
         Engine: postgres
         MasterUsername: postgres
-        MasterUserPassword: postgres
+        MasterUserPassword: '{{resolve:ssm:db_password}}'
         PubliclyAccessible: true
         BackupRetentionPeriod: 0
       DeletionPolicy: Snapshot

@@ -19,7 +19,9 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "generate-db-password": "aws ssm put-parameter --overwrite --name db_password --value \"$(npx --no pwgen -sy 20 1)\" --type String",
+    "show-db-password": "aws ssm get-parameter --name db_password"
   },
   "dependencies": {
     "@nestjs/common": "^9.3.12",
@@ -32,6 +34,7 @@
     "@nestjs/typeorm": "^9.0.1",
     "@vendia/serverless-express": "^4.10.1",
     "aws-lambda": "^1.0.7",
+    "dotenv": "^16.0.3",
     "passport": "^0.6.0",
     "passport-http": "^0.3.0",
     "passport-jwt": "^4.0.1",
