@@ -15,6 +15,7 @@ functions:
           - 'http://db27n60o60d5z.cloudfront.net'
           - 'https://db27n60o60d5z.cloudfront.net'
     environment:
+      NODE_ENV: production
       POSTGRES_HOST: !GetAtt CartDB.Endpoint.Address
       POSTGRES_PORT: !GetAtt CartDB.Endpoint.Port
       POSTGRES_USER: postgres
