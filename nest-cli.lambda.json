@@ -1,0 +1,9 @@
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "entryFile": "mainLambda",
+  "compilerOptions": {
+    "webpack": true,
+    "webpackConfigPath": "webpack.lambda.config.js"
+  }
+}

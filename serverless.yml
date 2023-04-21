@@ -1,0 +1,60 @@
+service: farafonoff-aws-cart-service
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-2
+  deploymentMethod: direct
+  architecture: arm64
+functions:
+  cart-service:
+    handler: dist/mainLambda.handler
+    url:
+      cors:
+        allowedOrigins:
+          - 'http://localhost:5555'
+          - 'http://db27n60o60d5z.cloudfront.net'
+          - 'https://db27n60o60d5z.cloudfront.net'
+    environment:
+      NODE_ENV: production
+      POSTGRES_HOST: !GetAtt CartDB.Endpoint.Address
+      POSTGRES_PORT: !GetAtt CartDB.Endpoint.Port
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: '{{resolve:ssm:db_password}}'
+      POSTGRES_DATABASE: cart
+resources:
+  Resources:
+    CartDB:
+      Type: AWS::RDS::DBInstance
+      Properties:
+        DBName: cart
+        AllocatedStorage: '20'
+        VPCSecurityGroups:
+          - !GetAtt DBEC2SecurityGroup.GroupId
+        DBInstanceClass: db.t4g.micro
+        Engine: postgres
+        MasterUsername: postgres
+        MasterUserPassword: '{{resolve:ssm:db_password}}'
+        PubliclyAccessible: true
+        BackupRetentionPeriod: 0
+      DeletionPolicy: Snapshot
+
+    DBEC2SecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupName: PublicAccessDBGroup
+        GroupDescription: Allow postgres inbound traffic
+        SecurityGroupIngress:
+          - IpProtocol: tcp
+            CidrIp: 0.0.0.0/0
+            FromPort: 5432
+            ToPort: 5432
+
+  Outputs:
+    DatabaseHost:
+      Value: !GetAtt CartDB.Endpoint.Address
+      Export:
+        Name: DatabaseHost
+    DatabasePort:
+      Value: !GetAtt CartDB.Endpoint.Port
+      Export:
+        Name: DatabasePort
